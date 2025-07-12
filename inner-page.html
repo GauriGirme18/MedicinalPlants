@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Identify - Medicinal Plant</title>
+
+  <!-- Favicons -->
+ <link rel="icon" type="image/png" href="static/assets/img/logo.png">
+<link rel="apple-touch-icon" href="static/assets/img/apple-touch-icon.png">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <link href="static/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/assets/css/style.css" rel="stylesheet">
+
+  <style>
+    /* Center the image preview */
+    .image-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    #imagePreview img {
+        max-width: 300px; /* Small preview */
+        height: auto;
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+        display: block;
+        margin: 10px auto; /* Centering */
+    }
+  </style>
+</head>
+
+<body>
+
+ 
+  <main id="main">
+
+    <section class="breadcrumbs">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Identification</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Identification</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="inner-page">
+      <div class="container text-center">
+        <h6>Upload an Image</h6>
+        <form id="upload-file" method="post" enctype="multipart/form-data">
+            <input class="appointment-btn" type="file" name="image" id="imageUpload" accept=".png, .jpg, .jpeg" onchange="previewImage(event)">
+        </form>
+
+        <div class="image-section">
+            <div class="img-preview" id="imagePreview">
+                <!-- Image preview will appear here -->
+            </div>
+            <button class="appointment-btn mt-3" onclick="predict()">Click here to see result</button>
+        </div>
+
+        <div id="predictionResult" class="mt-3"></div>
+      </div>
+    </section>
+<div class="row mt-5 mb-5">
+             <div class="col-lg-10 mx-auto">
+                 <div class="info-section">
+                     <h2 class="text-center mb-4">How It Works</h2>
+                     <div class="row g-4">
+                         <div class="col-md-4">
+                             <div class="card info-card">
+                                 <div class="card-body text-center">
+                                     <div class="info-icon">
+                                         <i class="fas fa-camera"></i>
+                                     </div>
+                                     <h5 class="card-title">Take a Photo</h5>
+                                     <p class="card-text">Capture a clear image of the affected plant leaf or area showing symptoms.</p>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="col-md-4">
+                             <div class="card info-card">
+                                 <div class="card-body text-center">
+                                     <div class="info-icon">
+                                         <i class="fas fa-upload"></i>
+                                     </div>
+                                     <h5 class="card-title">Upload Image</h5>
+                                     <p class="card-text">Upload the photo to our platform for instant AI-powered analysis.</p>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="col-md-4">
+                             <div class="card info-card">
+                                 <div class="card-body text-center">
+                                     <div class="info-icon">
+                                         <i class="fas fa-leaf"></i>
+                                     </div>
+                                     <h5 class="card-title">Get Results</h5>
+                                     <p class="card-text">Receive results with its common name, scientic name and uses.</p>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+  </main>
+
+  <footer>
+    <div class="container text-center">
+      Copyright © 2025 Medicinal Plant Identifier ®. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- JS Scripts -->
+  <script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var imgElement = document.createElement('img');
+            imgElement.src = reader.result;
+            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('imagePreview').appendChild(imgElement);
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function predict() {
+        var form_data = new FormData();
+        var fileInput = document.getElementById('imageUpload');
+        var file = fileInput.files[0];
+        form_data.append('image', file);
+
+        document.getElementById('predictionResult').innerText = 'Loading...';
+
+        fetch('/predict', {
+            method: 'POST',
+            body: form_data,
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('predictionResult').innerText = ' ' + data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('predictionResult').innerText = 'Error occurred.';
+        });
+    }
+  </script>
+
+</body>
+</html>
